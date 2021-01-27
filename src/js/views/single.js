@@ -6,21 +6,56 @@ import { Context } from "../store/appContext";
 export const Single = props => {
 	const { store, actions } = useContext(Context);
 	const params = useParams();
-	return (
-		<div className="jumbotron">
-			<h1 className="display-4">This will show the demo element: {store.demo[params.theid].title}</h1>
 
-			<hr className="my-4" />
+	const planet_id = params.planets_id;
+	const person_id = params.person_id;
+    const vehicle_id = params.vehicles_id;
+    
+    const [resourceType, setResourceType] = useState(null);
+    const [resourceIndex, setResourceIndex] = useState(null);
+    const [fetchedResource, setFetchedResource] = useState(null);
 
-			<Link to="/">
-				<span className="btn btn-primary btn-lg" href="#" role="button">
-					Back home
-				</span>
-			</Link>
-		</div>
-	);
+
+	const type = () => {
+		if (planet_id) {
+            setResourceType("planets") ;
+            setResourceIndex(planet_id);
+		} else if (person_id) {
+			setResourceType("person") ;
+            setResourceIndex(person_id);
+		} else if (vehicle_id) {
+			setResourceType("vehicles") ;
+            setResourceIndex(vehicle_id);
+		}
+    };
+    
+    useEffect (() => {
+        type();
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => resourceIndex(), 500);
+    },
+    [resourceType,  resourceIndex]);
+
+    const resource = () => {
+        if (resourceType !== nul && resourceIndex !== null) {
+            let url = store[resourceType] [resourceIndex].url;
+            fetch(url)
+            .then(res => {
+                if (!res.ok) throw new Error(res.statusText);
+                return res.json();
+            })
+            .then(data => {
+                setFetchedResource(data.result.properties);
+            })
+            .catch(err => console.error(err));
+        }
+    }
+
+	return <div className="" />;
 };
 
-Single.propTypes = {
+details.propTypes = {
 	match: PropTypes.object
 };
